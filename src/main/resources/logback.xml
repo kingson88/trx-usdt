@@ -1,0 +1,84 @@
+<configuration scan="true" scanPeriod="60 seconds" debug="false">
+    <property name="LOG_HOME" value="/data/logs/usdt-transfer"/>
+    <property name="APP_NAME" value="api"/>
+    <!-- 控制台输出 -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <param name="target" value="System.out"/>
+        <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%d %X{request_uuid} [%t] %-5p %c %line - [%m]%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="FILE"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/${APP_NAME}.log</file>
+        <append>true</append>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}.log.%d{yyyyMMdd}.%i</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 200MB -->
+                <maxFileSize>200MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%d %X{request_uuid} [%t] %-5p %c %line - [%m]%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+    <appender name="ERROR"
+              class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <file>${LOG_HOME}/error_${APP_NAME}.log</file>
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+            <!-- rollover daily -->
+            <fileNamePattern>${LOG_HOME}/error_${APP_NAME}.log.%d{yyyyMMdd}.%i</fileNamePattern>
+            <timeBasedFileNamingAndTriggeringPolicy
+                    class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <!-- or whenever the file size reaches 200MB -->
+                <maxFileSize>200MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+        <encoder>
+            <!--格式化输出：%d表示日期，%thread表示线程名，%-5level：级别从左显示5个字符宽度%msg：日志消息，%n是换行符 -->
+            <pattern>%d %X{request_uuid} [%t] %-5p %c %line - [%m]%n</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+    </appender>
+    <!-- ===== [框架Logger] ===== -->
+
+    <!-- [框架Logger] 数据访问层 - SQL -->
+    <logger name="java.sql" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <!-- [框架Logger] 数据访问层 - SQL -->
+    <logger name="com.alibaba.druid" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <!-- [框架Logger] 数据访问层 - mybatis -->
+    <logger name="org.mybatis" additivity="false">
+        <level value="DEBUG"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <!-- [框架Logger] 数据访问层 - SQL -->
+    <logger name="org.springframework" additivity="false">
+        <level value="INFO"/>
+        <appender-ref ref="STDOUT"/>
+    </logger>
+	<!-- [框架Logger] 数据访问层 - SQL -->
+
+    <root level="info">
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="FILE"/>
+        <appender-ref ref="ERROR"/>
+    </root>
+</configuration>
